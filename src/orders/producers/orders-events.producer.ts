@@ -42,7 +42,7 @@ export class OrdersEventsProducer implements OrderEventsPublisher, OnModuleInit,
     await this.connection?.close();
   }
 
-  async publishOrderCreated(order: Order): Promise<void> {
+  async publishOrderCreated(order: Order, paymentToken: string): Promise<void> {
     if (!this.channel) {
       this.logger.warn('Canal do RabbitMQ indisponivel. Evento order.created nao publicado.');
       return;
@@ -51,7 +51,7 @@ export class OrdersEventsProducer implements OrderEventsPublisher, OnModuleInit,
     const exchange = this.getExchange();
     const routingKey = this.getRoutingKey();
 
-    const event = buildOrderCreatedEvent(order);
+    const event = buildOrderCreatedEvent(order, paymentToken);
 
     // Publica um evento simples para outros servicos consumirem de forma assincrona.
     this.channel.publish(exchange, routingKey, Buffer.from(JSON.stringify(event)), {

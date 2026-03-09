@@ -5,5 +5,5 @@ export const ORDER_EVENTS_PUBLISHER = 'ORDER_EVENTS_PUBLISHER';
 
 // Contrato da porta de eventos de pedidos (arquitetura limpa).
 export interface OrderEventsPublisher {
-  publishOrderCreated(order: Order): Promise<void>;
+  publishOrderCreated(order: Order, paymentToken: string): Promise<void>;
 }

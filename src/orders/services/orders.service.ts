@@ -18,7 +18,7 @@ export class OrdersService {
 
   async createOrder(data: CreateOrderDto): Promise<Order> {
     const order = await this.ordersRepository.create(data);
-    await this.eventsPublisher.publishOrderCreated(order);
+    await this.eventsPublisher.publishOrderCreated(order, data.paymentToken);
     return order;
   }
 

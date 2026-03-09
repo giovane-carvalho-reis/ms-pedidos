@@ -1,4 +1,4 @@
-import { Order } from '../entities/order.entity';
+import { Order, OrderItemSnapshot } from '../entities/order.entity';
 
 export type OrderCreatedEvent = {
   eventType: 'order.created';
@@ -6,22 +6,29 @@ export type OrderCreatedEvent = {
   occurredAt: string;
   data: {
     orderId: string;
-    customerName: string;
+    customerId: string;
+    items: OrderItemSnapshot[];
     totalAmount: number;
-    status: string;
+    status: 'PENDING_PAYMENT';
+    paymentToken: string;
   };
 };
 
-export function buildOrderCreatedEvent(order: Order): OrderCreatedEvent {
+export function buildOrderCreatedEvent(
+  order: Order,
+  paymentToken: string,
+): OrderCreatedEvent {
   return {
     eventType: 'order.created',
     source: 'livraria-online.order-service',
     occurredAt: new Date().toISOString(),
     data: {
       orderId: order.id,
-      customerName: order.customerName,
+      customerId: order.customerId,
+      items: order.items,
       totalAmount: Number(order.totalAmount),
-      status: order.status,
+      status: 'PENDING_PAYMENT',
+      paymentToken,
     },
   };
 }

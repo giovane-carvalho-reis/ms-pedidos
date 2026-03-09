@@ -165,9 +165,18 @@ Exemplo de payload publicado:
 	"occurredAt": "2026-03-08T16:15:00.000Z",
 	"data": {
 		"orderId": "a1b2c3d4",
-		"customerName": "Maria Souza",
-		"totalAmount": 199.9,
-		"status": "PENDING"
+		"customerId": "cust-123",
+		"items": [
+			{
+				"bookId": "book_1",
+				"title": "Clean Architecture",
+				"quantity": 2,
+				"price": 79.9
+			}
+		],
+		"totalAmount": 159.8,
+		"status": "PENDING_PAYMENT",
+		"paymentToken": "tok_abc123"
 	}
 }
 ```
@@ -188,10 +197,26 @@ Exemplo de request:
 curl -X POST http://localhost:3000/api/orders \
 	-H "Content-Type: application/json" \
 	-d '{
-		"customerName": "Maria Souza",
-		"totalAmount": 199.90
+		"customerId": "cust-123",
+		"paymentToken": "tok_abc123",
+		"items": [
+			{
+				"bookId": "book_1",
+				"title": "Clean Architecture",
+				"quantity": 2,
+				"price": 79.90
+			},
+			{
+				"bookId": "book_2",
+				"title": "Domain-Driven Design",
+				"quantity": 1,
+				"price": 39.90
+			}
+		]
 	}'
 ```
+
+Observacao: `totalAmount` e calculado automaticamente pelo servico com base em `items`.
 
 ### GET /orders
 

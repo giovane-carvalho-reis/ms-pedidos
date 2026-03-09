@@ -14,10 +14,16 @@ export class OrdersRepository {
   ) {}
 
   async create(data: CreateOrderDto): Promise<Order> {
+    const totalAmount = data.items.reduce(
+      (sum, item) => sum + item.quantity * item.price,
+      0,
+    );
+
     const order = this.repository.create({
-      customerName: data.customerName,
-      totalAmount: data.totalAmount,
-      status: 'PENDING',
+      customerId: data.customerId,
+      items: data.items,
+      totalAmount,
+      status: 'PENDING_PAYMENT',
     });
 
     return this.repository.save(order);
