@@ -122,6 +122,51 @@ API disponivel em:
 
 - `http://localhost:3000/api`
 
+## CI com GitHub Actions Runner Local (Docker)
+
+Este repositorio executa o pipeline em um runner self-hosted local, mas os arquivos de infraestrutura do runner sao mantidos em um repositorio de infra separado.
+
+O workflow usa os labels:
+
+- `self-hosted`
+- `linux`
+- `x64`
+- `docker-local`
+
+Arquivo do workflow:
+
+- `.github/workflows/ci.yml`
+
+### 1) Gerar token temporario do runner
+
+No GitHub do repositorio:
+
+- `Settings -> Actions -> Runners -> New self-hosted runner`
+- Copie o token de registro (`RUNNER_TOKEN`)
+
+Observacao: este token expira em pouco tempo. Gere um novo se necessario.
+
+### 2) Configurar variaveis do runner
+
+Configure as variaveis no repositorio de infra e suba o container de runner por la.
+
+O runner precisa registrar os labels:
+
+- `self-hosted`
+- `linux`
+- `x64`
+- `docker-local`
+
+### 3) Validar no GitHub
+
+Verifique se o runner aparece como `Online` em:
+
+- `Settings -> Actions -> Runners`
+
+### 4) Executar o pipeline
+
+Ao fazer `push`, abrir `pull request` ou executar manualmente (`workflow_dispatch`), o job roda no runner local.
+
 ## Como Iniciar o Banco com Docker
 
 Subir banco e servico juntos:
