@@ -123,7 +123,7 @@ describe('OrdersController (e2e)', () => {
           ],
         })
         .expect(201)
-        .expect((res) => {
+        .expect((res: { body: { customerName: string; id: string } }) => {
           expect(res.body.customerName).toBe('João Silva');
           expect(res.body.id).toBe('uuid-e2e-001');
         });

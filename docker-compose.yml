@@ -1,48 +1,21 @@
-# ============================================================
-# docker-compose.yml - ms-pedidos
-# ============================================================
-# Orquestra os containers necessários para executar o serviço
-# em ambiente de desenvolvimento local.
-#
-# Containers incluídos:
-# 1. postgres  - Banco de dados PostgreSQL
-# 2. ms-pedidos - A aplicação NestJS
-#
-# Como usar:
-#   docker-compose up -d              # Inicia todos os containers em background
-#   docker-compose up postgres -d     # Inicia apenas o banco de dados
-#   docker-compose down               # Para e remove todos os containers
-#   docker-compose logs -f ms-pedidos # Exibe os logs da aplicação em tempo real
-# ============================================================
-
 version: '3.9'
 
 services:
-  # ===================
-  # Banco de Dados PostgreSQL
-  # ===================
   postgres:
-    # Imagem oficial do PostgreSQL versão 15
     image: postgres:15-alpine
     container_name: ms-pedidos-postgres
 
-    # Variáveis de ambiente do PostgreSQL
     environment:
       POSTGRES_USER: ${DB_USERNAME:-postgres}
       POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
       POSTGRES_DB: ${DB_DATABASE:-ms_pedidos}
 
-    # Mapeia a porta do container para a porta local
-    # Formato: "porta_local:porta_container"
     ports:
-      - '${DB_PORT:-5432}:5432'
+      - '${DB_PORT:-5433}:5432'
 
-    # Volume para persistir os dados do banco mesmo após o container ser removido
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
-    # Healthcheck verifica se o PostgreSQL está pronto para aceitar conexões
-    # Isso impede que a aplicação tente conectar antes do banco estar pronto
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U ${DB_USERNAME:-postgres} -d ${DB_DATABASE:-ms_pedidos}']
       interval: 10s
@@ -51,58 +24,43 @@ services:
       start_period: 30s
 
     networks:
-      - ms-pedidos-network
+      - shared-network
 
-  # ===================
-  # Aplicação NestJS
-  # ===================
+    restart: unless-stopped
+
   ms-pedidos:
-    # Constrói a imagem a partir do Dockerfile no diretório atual
     build:
       context: .
       dockerfile: Dockerfile
 
-    container_name: ms-pedidos-app
+    container_name: ms-pedidos
 
-    # Porta da aplicação
     ports:
-      - '${PORT:-3000}:3000'
+      - '${PORT:-3002}:3000'
 
-    # Variáveis de ambiente da aplicação
-    # Usam os valores do .env ou valores padrão
     environment:
-      NODE_ENV: ${NODE_ENV:-development}
-      PORT: ${PORT:-3000}
+      NODE_ENV: ${NODE_ENV:-production}
+      PORT: 3000
       DB_HOST: postgres
       DB_PORT: 5432
       DB_USERNAME: ${DB_USERNAME:-postgres}
       DB_PASSWORD: ${DB_PASSWORD:-postgres}
       DB_DATABASE: ${DB_DATABASE:-ms_pedidos}
 
-    # Define que a aplicação só deve iniciar após o banco estar saudável
     depends_on:
       postgres:
         condition: service_healthy
 
     networks:
-      - ms-pedidos-network
+      - shared-network
 
-    # Reinicia o container automaticamente se ele parar inesperadamente
     restart: unless-stopped
-
-# ===================
-# Volumes
-# ===================
-# Volumes nomeados são gerenciados pelo Docker e persistem entre execuções
+    pull_policy: always
 volumes:
   postgres_data:
     name: ms-pedidos-postgres-data
 
-# ===================
-# Redes
-# ===================
-# Rede isolada para comunicação entre os containers do projeto
 networks:
-  ms-pedidos-network:
-    name: ms-pedidos-network
+  shared-network:
+    name: microservices-network
     driver: bridge
