@@ -1,15 +1,3 @@
-/**
- * app.e2e-spec.ts
- *
- * Testes de integração (end-to-end) da aplicação.
- *
- * Diferente dos testes unitários, os testes e2e testam a aplicação como um todo,
- * simulando requisições HTTP reais ao servidor.
- *
- * Neste arquivo utilizamos o Supertest para fazer requisições HTTP
- * ao servidor NestJS em memória, sem precisar de um banco de dados real.
- * Para isso, mocamos o TypeORM para que os testes sejam independentes do banco.
- */
 
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
