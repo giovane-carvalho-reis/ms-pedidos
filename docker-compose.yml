@@ -34,7 +34,6 @@ services:
       dockerfile: Dockerfile
 
     container_name: ms-pedidos
-
     ports:
       - '${PORT:-3002}:3000'
 

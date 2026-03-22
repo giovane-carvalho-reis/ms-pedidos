@@ -70,3 +70,4 @@ O workflow em `.github/workflows/deploy.yml` deste repositório já foi simplifi
 ## Referências
 - [GitHub Actions - Self Hosted Runners](https://docs.github.com/en/actions/hosting-your-own-runners)
 - [Concurrency in GitHub Actions](https://docs.github.com/en/actions/using-jobs/using-concurrency)
+
