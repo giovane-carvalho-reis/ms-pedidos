@@ -1,18 +1,3 @@
-/**
- * orders.service.spec.ts
- *
- * Testes unitários para o OrdersService.
- *
- * Nestes testes, usamos mocks (objetos simulados) para substituir as dependências
- * reais (OrdersRepository e LoggerService). Isso garante que estamos testando
- * apenas a lógica do Service, sem depender do banco de dados.
- *
- * Padrão AAA (Arrange, Act, Assert):
- * - Arrange: configura o cenário do teste
- * - Act: executa a ação que está sendo testada
- * - Assert: verifica se o resultado é o esperado
- */
-
 import { Test, TestingModule } from '@nestjs/testing';
 import { NotFoundException } from '@nestjs/common';
 import { OrdersService } from './orders.service';

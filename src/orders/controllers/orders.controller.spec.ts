@@ -1,13 +1,3 @@
-/**
- * orders.controller.spec.ts
- *
- * Testes unitários para o OrdersController.
- *
- * O controller é testado com um mock do OrdersService, garantindo que
- * estamos testando apenas a camada de roteamento e extração de dados
- * da requisição, sem executar lógica de negócio real.
- */
-
 import { Test, TestingModule } from '@nestjs/testing';
 import { OrdersController } from './orders.controller';
 import { OrdersService } from '../services/orders.service';
