@@ -1,39 +1,43 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreateOrderDto } from '../dto/create-order.dto';
 import { Order } from '../entities/order.entity';
+import { CreateOrderDto } from '../dto/create-order.dto';
 
-// Repository concentra acesso ao banco e querys da entidade de pedido.
 @Injectable()
 export class OrdersRepository {
   constructor(
-    // NestJS injeta o repository do TypeORM da entidade Order automaticamente.
     @InjectRepository(Order)
-    private readonly repository: Repository<Order>,
+    private readonly orderRepository: Repository<Order>,
   ) {}
 
-  async create(data: CreateOrderDto): Promise<Order> {
-    const totalAmount = data.items.reduce(
-      (sum, item) => sum + item.quantity * item.price,
-      0,
-    );
+  async findAll(): Promise<Order[]> {
+    return this.orderRepository.find({
+      order: { createdAt: 'DESC' },
+    });
+  }
 
-    const order = this.repository.create({
-      customerId: data.customerId,
-      items: data.items,
+  async findById(id: string): Promise<Order> {
+    const order = await this.orderRepository.findOneBy({ id });
+
+    if (!order) {
+      throw new NotFoundException(`Pedido com ID "${id}" não encontrado`);
+    }
+
+    return order;
+  }
+
+  async create(
+    createOrderDto: CreateOrderDto,
+    totalAmount: number,
+  ): Promise<Order> {
+    const order = this.orderRepository.create({
+      customerName: createOrderDto.customerName,
+      deliveryAddress: createOrderDto.deliveryAddress,
+      items: createOrderDto.items,
       totalAmount,
-      status: 'PENDING_PAYMENT',
     });
 
-    return this.repository.save(order);
-  }
-
-  async findAll(): Promise<Order[]> {
-    return this.repository.find({ order: { createdAt: 'DESC' } });
-  }
-
-  async findOneById(id: string): Promise<Order | null> {
-    return this.repository.findOne({ where: { id } });
+    return this.orderRepository.save(order);
   }
 }

@@ -1,31 +1,51 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
-export type OrderItemSnapshot = {
-  bookId: string;
-  title: string;
-  quantity: number;
-  price: number;
-};
+export enum OrderStatus {
+  PENDING = 'PENDING',
+  CONFIRMED = 'CONFIRMED',
+  SHIPPED = 'SHIPPED',
+  DELIVERED = 'DELIVERED',
+  CANCELLED = 'CANCELLED',
+}
 
-// Entity mapeia a tabela orders no PostgreSQL para um objeto TypeScript.
 @Entity('orders')
 export class Order {
   @PrimaryGeneratedColumn('uuid')
-  id!: string;
+  id: string;
 
-  @Column({ type: 'varchar', length: 80 })
-  customerId!: string;
+  @Column({ name: 'customer_name' })
+  customerName: string;
 
-  // Snapshot dos itens para preservar o estado do carrinho na criacao do pedido.
+  @Column({ name: 'delivery_address' })
+  deliveryAddress: string;
+
   @Column({ type: 'jsonb' })
-  items!: OrderItemSnapshot[];
+  items: Array<{
+    productId: string;
+    productName: string;
+    quantity: number;
+    unitPrice: number;
+  }>;
 
-  @Column({ type: 'decimal', precision: 10, scale: 2 })
-  totalAmount!: number;
+  @Column({ type: 'decimal', precision: 10, scale: 2, name: 'total_amount' })
+  totalAmount: number;
 
-  @Column({ type: 'varchar', length: 50, default: 'PENDING_PAYMENT' })
-  status!: string;
+  @Column({
+    type: 'enum',
+    enum: OrderStatus,
+    default: OrderStatus.PENDING,
+  })
+  status: OrderStatus;
 
-  @CreateDateColumn({ type: 'timestamp' })
-  createdAt!: Date;
+  @CreateDateColumn({ name: 'created_at' })
+  createdAt: Date;
+
+  @UpdateDateColumn({ name: 'updated_at' })
+  updatedAt: Date;
 }

@@ -1,28 +1,33 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  HttpCode,
+  HttpStatus,
+} from '@nestjs/common';
+import { OrdersService } from '../services/orders.service';
 import { CreateOrderDto } from '../dto/create-order.dto';
 import { Order } from '../entities/order.entity';
-import { OrdersService } from '../services';
 
-// Controller recebe requisicoes HTTP e delega a regra de negocio para o service.
 @Controller('orders')
 export class OrdersController {
-  constructor(
-    // Injeção de dependencia: OrdersService e fornecido pelo modulo de pedidos.
-    private readonly ordersService: OrdersService,
-  ) {}
+  constructor(private readonly ordersService: OrdersService) {}
 
   @Post()
-  async create(@Body() dto: CreateOrderDto): Promise<Order> {
-    return this.ordersService.createOrder(dto);
+  @HttpCode(HttpStatus.CREATED)
+  async create(@Body() createOrderDto: CreateOrderDto): Promise<Order> {
+    return this.ordersService.create(createOrderDto);
   }
 
   @Get()
   async findAll(): Promise<Order[]> {
-    return this.ordersService.getOrders();
+    return this.ordersService.findAll();
   }
 
   @Get(':id')
-  async findById(@Param('id') id: string): Promise<Order> {
-    return this.ordersService.getOrderById(id);
+  async findOne(@Param('id') id: string): Promise<Order> {
+    return this.ordersService.findById(id);
   }
 }

@@ -1,51 +1,45 @@
-import { Type } from 'class-transformer';
 import {
-  ArrayMinSize,
-  IsInt,
+  IsString,
   IsNotEmpty,
+  IsArray,
   IsNumber,
   IsPositive,
-  IsString,
-  MaxLength,
-  Min,
   ValidateNested,
+  ArrayMinSize,
+  Min,
 } from 'class-validator';
+import { Type } from 'class-transformer';
 
-// Cada item representa uma linha do carrinho no momento do checkout.
-export class CreateOrderItemDto {
+export class OrderItemDto {
   @IsString()
-  @IsNotEmpty()
-  @MaxLength(80)
-  bookId!: string;
+  @IsNotEmpty({ message: 'O ID do produto não pode estar vazio' })
+  productId: string;
 
   @IsString()
-  @IsNotEmpty()
-  @MaxLength(180)
-  title!: string;
+  @IsNotEmpty({ message: 'O nome do produto não pode estar vazio' })
+  productName: string;
 
-  @IsInt()
-  @Min(1)
-  quantity!: number;
+  @IsNumber({}, { message: 'A quantidade deve ser um número' })
+  @Min(1, { message: 'A quantidade mínima é 1' })
+  quantity: number;
 
-  @IsNumber({ maxDecimalPlaces: 2 })
-  @IsPositive()
-  price!: number;
+  @IsNumber({}, { message: 'O preço unitário deve ser um número' })
+  @IsPositive({ message: 'O preço unitário deve ser positivo' })
+  unitPrice: number;
 }
 
-// DTO valida os dados recebidos no endpoint antes de chegar na regra de negocio.
 export class CreateOrderDto {
   @IsString()
-  @IsNotEmpty()
-  @MaxLength(80)
-  customerId!: string;
+  @IsNotEmpty({ message: 'O nome do cliente é obrigatório' })
+  customerName: string;
 
   @IsString()
-  @IsNotEmpty()
-  @MaxLength(120)
-  paymentToken!: string;
+  @IsNotEmpty({ message: 'O endereço de entrega é obrigatório' })
+  deliveryAddress: string;
 
+  @IsArray({ message: 'Os itens devem ser um array' })
+  @ArrayMinSize(1, { message: 'O pedido deve ter pelo menos 1 item' })
   @ValidateNested({ each: true })
-  @Type(() => CreateOrderItemDto)
-  @ArrayMinSize(1)
-  items!: CreateOrderItemDto[];
+  @Type(() => OrderItemDto)
+  items: OrderItemDto[];
 }

@@ -1,12 +1,10 @@
-import 'reflect-metadata';
-import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
 
-async function bootstrap(): Promise<void> {
+async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // ValidationPipe aplica validacao automatica dos DTOs em toda a aplicacao.
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -17,8 +15,10 @@ async function bootstrap(): Promise<void> {
 
   app.setGlobalPrefix('api');
 
-  const port = Number(process.env.PORT ?? 3000);
+  const port = process.env.PORT ?? 3000;
   await app.listen(port);
+
+  console.log(`Serviço rodando em: http://localhost:${port}/api`);
 }
 
 bootstrap();

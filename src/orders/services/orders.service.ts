@@ -1,38 +1,46 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { CreateOrderDto } from '../dto/create-order.dto';
+import { Injectable } from '@nestjs/common';
 import { Order } from '../entities/order.entity';
-import { OrdersRepository } from '../repositories';
-import {
-  ORDER_EVENTS_PUBLISHER,
-  OrderEventsPublisher,
-} from '../contracts/order-events.publisher';
+import { OrdersRepository } from '../repositories/orders.repository';
+import { CreateOrderDto } from '../dto/create-order.dto';
+import { LoggerService } from '../../common/logger/logger.service';
 
-// Service aplica regras de negocio e coordena fluxo entre controller e repository.
 @Injectable()
 export class OrdersService {
   constructor(
     private readonly ordersRepository: OrdersRepository,
-    @Inject(ORDER_EVENTS_PUBLISHER)
-    private readonly eventsPublisher: OrderEventsPublisher,
+    private readonly logger: LoggerService,
   ) {}
 
-  async createOrder(data: CreateOrderDto): Promise<Order> {
-    const order = await this.ordersRepository.create(data);
-    await this.eventsPublisher.publishOrderCreated(order, data.paymentToken);
-    return order;
-  }
-
-  async getOrders(): Promise<Order[]> {
+  async findAll(): Promise<Order[]> {
+    this.logger.log('Buscando todos os pedidos', OrdersService.name);
     return this.ordersRepository.findAll();
   }
 
-  async getOrderById(id: string): Promise<Order> {
-    const order = await this.ordersRepository.findOneById(id);
+  async findById(id: string): Promise<Order> {
+    this.logger.log(`Buscando pedido com ID: ${id}`, OrdersService.name);
+    return this.ordersRepository.findById(id);
+  }
 
-    if (!order) {
-      throw new NotFoundException(`Pedido com id ${id} nao encontrado`);
-    }
+  async create(createOrderDto: CreateOrderDto): Promise<Order> {
+    this.logger.log(
+      `Criando novo pedido para: ${createOrderDto.customerName}`,
+      OrdersService.name,
+    );
+
+    const totalAmount = this.calculateTotal(createOrderDto);
+    const order = await this.ordersRepository.create(createOrderDto, totalAmount);
+
+    this.logger.log(
+      `Pedido criado com sucesso. ID: ${order.id}`,
+      OrdersService.name,
+    );
 
     return order;
+  }
+
+  private calculateTotal(createOrderDto: CreateOrderDto): number {
+    return createOrderDto.items.reduce((total, item) => {
+      return total + item.quantity * item.unitPrice;
+    }, 0);
   }
 }
