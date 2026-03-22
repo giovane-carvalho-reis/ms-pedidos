@@ -44,7 +44,7 @@ Substitua `{MICROSERVICE_NAME}` pelos valores específicos:
 - **Runner Dedicado**: O runner self-hosted deve estar registrado com os labels apropriados (linux, docker, e o nome do microserviço)
 - **Sem Webhook Local**: Este fluxo não requer exposição de webhooks HTTP locais
 
-### 4. Estrutura de Repositório Esperada
+### 4. Estrutura de Repositório Esperada  
 
 ```
 {microservice-repo}/
@@ -71,4 +71,3 @@ O workflow em `.github/workflows/deploy.yml` deste repositório já foi simplifi
 ## Referências
 - [GitHub Actions - Self Hosted Runners](https://docs.github.com/en/actions/hosting-your-own-runners)
 - [Concurrency in GitHub Actions](https://docs.github.com/en/actions/using-jobs/using-concurrency)
-
