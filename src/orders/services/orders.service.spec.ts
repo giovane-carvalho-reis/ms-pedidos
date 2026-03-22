@@ -10,7 +10,7 @@ describe('OrdersService', () => {
   let service: OrdersService;
   let repository: jest.Mocked<OrdersRepository>;
 
-  // Pedido de exemplo para usar nos testes
+
   const mockOrder: Order = {
     id: 'uuid-123',
     customerName: 'João Silva',
@@ -29,7 +29,6 @@ describe('OrdersService', () => {
     updatedAt: new Date('2024-01-01'),
   };
 
-  // DTO de exemplo para criação de pedido
   const createOrderDto: CreateOrderDto = {
     customerName: 'João Silva',
     deliveryAddress: 'Rua das Flores, 123 - São Paulo/SP',
@@ -78,13 +77,11 @@ describe('OrdersService', () => {
 
   describe('findAll', () => {
     it('deve retornar uma lista de pedidos', async () => {
-      // Arrange: configura o mock para retornar uma lista com um pedido
+
       repository.findAll.mockResolvedValue([mockOrder]);
 
-      // Act: chama o método que está sendo testado
       const result = await service.findAll();
 
-      // Assert: verifica se o resultado é uma lista com o pedido esperado
       expect(result).toHaveLength(1);
       expect(result[0]).toEqual(mockOrder);
       expect(repository.findAll).toHaveBeenCalledTimes(1);
@@ -145,7 +142,6 @@ describe('OrdersService', () => {
 
       await service.create(dtoComMultiplosItens);
 
-      // Total esperado: (3 * 10) + (1 * 25) = 30 + 25 = 55
       expect(repository.create).toHaveBeenCalledWith(dtoComMultiplosItens, 55.0);
     });
   });
