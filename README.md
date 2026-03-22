@@ -67,6 +67,7 @@ O workflow em `.github/workflows/deploy.yml` deste repositório já foi simplifi
 - ✅ Health check básico com `docker compose ps`
 - ✅ Concurrency control (`deploy-ms-pedidos`)
 
+
 ## Referências
 - [GitHub Actions - Self Hosted Runners](https://docs.github.com/en/actions/hosting-your-own-runners)
 - [Concurrency in GitHub Actions](https://docs.github.com/en/actions/using-jobs/using-concurrency)
