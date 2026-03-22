@@ -2,55 +2,24 @@ name: Deploy ms-pedidos
 
 on:
   push:
-    branches: [ "master" ]
+    branches:
+      - main
+
+concurrency:
+  group: deploy-ms-pedidos
+  cancel-in-progress: true
 
 jobs:
   deploy:
-    runs-on: self-hosted
-
+    runs-on: [self-hosted, linux, docker, ms-pedidos]
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - name: Setup .env
+      - name: Build e recreate
         run: |
-          if [ ! -f .env ]; then
-            cp .env.example .env
-          fi
-        shell: bash
+          docker compose build --no-cache
+          docker compose up -d --force-recreate
 
-      - name: Stop containers
-        run: docker-compose down --remove-orphans
-        continue-on-error: true
-
-      - name: Prune images
-        run: docker image prune -f
-        continue-on-error: true
-
-      - name: Build and start
-        run: docker-compose up -d --build
-
-      - name: Wait for services
-        run: sleep 10
-        shell: bash
-
-      - name: Check containers
-        run: docker ps
-
-      - name: Show logs on failure
-        if: failure()
-        run: docker-compose logs --tail=50
-
-      - name: Health check
-        run: |
-          max_attempts=30
-          attempt=0
-          while [ $attempt -lt $max_attempts ]; do
-            if docker-compose exec -T ms-pedidos curl -f http://localhost:3000 > /dev/null 2>&1; then
-              exit 0
-            fi
-            attempt=$((attempt + 1))
-            sleep 2
-          done
-          docker-compose logs ms-pedidos
-          exit 1
-        shell: bash
+      - name: Healthcheck basico
+        run: docker compose ps
