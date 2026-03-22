@@ -1,0 +1,48 @@
+name: CI ms-pedidos (self-hosted)
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  ci:
+    runs-on: [self-hosted, linux, docker, ms-pedidos]
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Show runner info
+        run: |
+          echo "Runner: $RUNNER_NAME"
+          uname -a
+          docker --version
+          node --version
+          npm --version
+
+      - name: Instalar dependências
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Build
+        run: npm run build
+
+      - name: Testes unitários
+        run: npm test
+
+      - name: Testes e2e
+        run: npm run test:e2e
+
+      - name: Build Docker sem cache
+        run: docker compose build --no-cache
+
+      - name: Subir stack Docker
+        run: docker compose up -d --force-recreate
+
+      - name: Status Docker
+        run: docker compose ps
