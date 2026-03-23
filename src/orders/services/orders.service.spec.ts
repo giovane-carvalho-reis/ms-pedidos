@@ -43,13 +43,13 @@ describe('OrdersService', () => {
   };
 
   beforeEach(async () => {
-    // Cria um módulo de teste com mocks das dependências
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         OrdersService,
         {
           provide: OrdersRepository,
-          // jest.fn() cria funções simuladas que podemos controlar nos testes
+
           useValue: {
             findAll: jest.fn(),
             findById: jest.fn(),
@@ -123,7 +123,6 @@ describe('OrdersService', () => {
 
       const result = await service.create(createOrderDto);
 
-      // Verifica que o total foi calculado: 2 * 50.00 = 100.00
       expect(repository.create).toHaveBeenCalledWith(createOrderDto, 100.0);
       expect(result).toEqual(mockOrder);
     });
