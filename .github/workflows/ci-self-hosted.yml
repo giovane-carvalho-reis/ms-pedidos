@@ -23,11 +23,11 @@ jobs:
           node --version
           npm --version
 
-      - name: Build Docker
-        run: docker-compose build
+      - name: Build Docker sem cache
+        run: docker compose build --no-cache
 
       - name: Subir stack Docker
-        run: docker-compose up -d --force-recreate
+        run: docker compose up -d --force-recreate
 
       - name: Status Docker
-        run: docker-compose ps
+        run: docker compose ps
