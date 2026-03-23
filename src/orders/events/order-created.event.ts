@@ -1,4 +1,4 @@
-import { Order, OrderItemSnapshot } from '../entities/order.entity';
+import { Order } from '../entities/order.entity';
 
 export type OrderCreatedEvent = {
   eventType: 'order.created';
@@ -6,8 +6,8 @@ export type OrderCreatedEvent = {
   occurredAt: string;
   data: {
     orderId: string;
-    customerId: string;
-    items: OrderItemSnapshot[];
+    customerName: string;
+    items: Order['items'];
     totalAmount: number;
     status: 'PENDING_PAYMENT';
     paymentToken: string;
@@ -24,7 +24,7 @@ export function buildOrderCreatedEvent(
     occurredAt: new Date().toISOString(),
     data: {
       orderId: order.id,
-      customerId: order.customerId,
+      customerName: order.customerName,
       items: order.items,
       totalAmount: Number(order.totalAmount),
       status: 'PENDING_PAYMENT',
