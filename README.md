@@ -44,6 +44,7 @@ Substitua `{MICROSERVICE_NAME}` pelos valores específicos:
 - **Runner Dedicado**: O runner self-hosted deve estar registrado com os labels apropriados (linux, docker, e o nome do microserviço)
 - **Sem Webhook Local**: Este fluxo não requer exposição de webhooks HTTP locais
 
+
 ### 4. Estrutura de Repositório Esperada  
 
 ```
