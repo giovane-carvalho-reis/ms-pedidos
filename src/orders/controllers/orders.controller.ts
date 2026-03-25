@@ -23,7 +23,7 @@ export class OrdersController {
     // Exemplo integração com MS-Livros
     // this.ordersService.findBook(token);
 
-    return this.ordersService.create(createOrderDto);
+    return this.ordersService.create(createOrderDto, token);
   }
 
   @Get()
