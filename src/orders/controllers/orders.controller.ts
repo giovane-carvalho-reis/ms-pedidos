@@ -6,6 +6,7 @@ import {
   Param,
   HttpCode,
   HttpStatus,
+  Headers as NestHeaders
 } from '@nestjs/common';
 import { OrdersService } from '../services/orders.service';
 import { CreateOrderDto } from '../dto/create-order.dto';
@@ -17,7 +18,11 @@ export class OrdersController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  async create(@Body() createOrderDto: CreateOrderDto): Promise<Order> {
+  async create(@Body() createOrderDto: CreateOrderDto, @NestHeaders('authorization') token: string): Promise<Order> {
+    
+    // Exemplo integração com MS-Livros
+    this.ordersService.findBook(token);
+
     return this.ordersService.create(createOrderDto);
   }
 
