@@ -30,9 +30,10 @@ export class OrdersRepository {
   async create(
     createOrderDto: CreateOrderDto,
     totalAmount: number,
+    user: any,
   ): Promise<Order> {
     const order = this.orderRepository.create({
-      customerName: createOrderDto.customerName,
+      customerName: user.name,
       deliveryAddress: createOrderDto.deliveryAddress,
       items: createOrderDto.items,
       totalAmount,

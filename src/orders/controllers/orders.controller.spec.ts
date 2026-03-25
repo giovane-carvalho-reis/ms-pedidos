@@ -27,7 +27,7 @@ describe('OrdersController', () => {
   };
 
   const createOrderDto: CreateOrderDto = {
-    customerName: 'Ana Costa',
+    customerID: 1,
     deliveryAddress: 'Rua Verde, 456 - Curitiba/PR',
     items: [
       {
@@ -66,7 +66,7 @@ describe('OrdersController', () => {
     it('deve criar um pedido e retorná-lo', async () => {
       service.create.mockResolvedValue(mockOrder);
 
-      const result = await controller.create(createOrderDto);
+      const result = await controller.create(createOrderDto, '');
 
       expect(service.create).toHaveBeenCalledWith(createOrderDto);
       expect(result).toEqual(mockOrder);

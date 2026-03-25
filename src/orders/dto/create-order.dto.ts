@@ -29,9 +29,9 @@ export class OrderItemDto {
 }
 
 export class CreateOrderDto {
-  @IsString()
+  @IsNumber()
   @IsNotEmpty({ message: 'O nome do cliente é obrigatório' })
-  customerName: string;
+  customerID: number;
 
   @IsString()
   @IsNotEmpty({ message: 'O endereço de entrega é obrigatório' })

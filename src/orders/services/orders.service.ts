@@ -3,6 +3,8 @@ import { Order } from '../entities/order.entity';
 import { OrdersRepository } from '../repositories/orders.repository';
 import { CreateOrderDto } from '../dto/create-order.dto';
 import { LoggerService } from '../../common/logger/logger.service';
+import {firstValueFrom} from "rxjs";
+import {HttpService} from "@nestjs/axios";
 import { OrderEventsPublisher, ORDER_EVENTS_PUBLISHER } from '../contracts/order-events.publisher';
 
 
@@ -11,6 +13,7 @@ export class OrdersService {
   constructor(
     private readonly ordersRepository: OrdersRepository,
     private readonly logger: LoggerService,
+    private readonly httpService: HttpService,
     @Inject(ORDER_EVENTS_PUBLISHER)
     private readonly orderEventsPublisher: OrderEventsPublisher,
   ) {}
@@ -25,18 +28,24 @@ export class OrdersService {
     return this.ordersRepository.findById(id);
   }
 
-  async create(createOrderDto: CreateOrderDto): Promise<Order> {
+  async create(createOrderDto: CreateOrderDto, token: string): Promise<Order> {
     this.logger.log(
-      `Criando novo pedido para: ${createOrderDto.customerName}`,
-      OrdersService.name,
+        `Criando novo pedido para: ${createOrderDto.customerID}`,
+        OrdersService.name,
     );
 
     const totalAmount = this.calculateTotal(createOrderDto);
-    const order = await this.ordersRepository.create(createOrderDto, totalAmount);
+    const response = await firstValueFrom(
+        this.httpService.get(`http://localhost:8181/usuarios/${createOrderDto.customerID}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }));
+    const order = await this.ordersRepository.create(createOrderDto,  response.data.nome, totalAmount);
 
     this.logger.log(
-      `Pedido criado com sucesso. ID: ${order.id}`,
-      OrdersService.name,
+        `Pedido criado com sucesso. ID: ${order.id}`,
+        OrdersService.name,
     );
 
     // Envia evento para o RabbitMQ após gravar o pedido
