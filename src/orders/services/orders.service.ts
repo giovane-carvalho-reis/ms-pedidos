@@ -32,6 +32,7 @@ export class OrdersService {
     );
 
     const totalAmount = this.calculateTotal(createOrderDto);
+
     const order = await this.ordersRepository.create(createOrderDto, totalAmount);
 
     this.logger.log(

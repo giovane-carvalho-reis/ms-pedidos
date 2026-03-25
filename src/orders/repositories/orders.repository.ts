@@ -31,8 +31,10 @@ export class OrdersRepository {
     createOrderDto: CreateOrderDto,
     totalAmount: number,
   ): Promise<Order> {
+
     const order = this.orderRepository.create({
       customerName: createOrderDto.customerName,
+      email: createOrderDto.email,
       deliveryAddress: createOrderDto.deliveryAddress,
       items: createOrderDto.items,
       totalAmount,

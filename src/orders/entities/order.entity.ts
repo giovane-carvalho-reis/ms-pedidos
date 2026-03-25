@@ -19,8 +19,12 @@ export class Order {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+
   @Column({ name: 'customer_name' })
   customerName: string;
+
+  @Column({ name: 'email' })
+  email: string;
 
   @Column({ name: 'delivery_address' })
   deliveryAddress: string;
