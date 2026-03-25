@@ -50,21 +50,28 @@ export class OrdersEventsProducer implements OrderEventsPublisher, OnModuleInit,
 
     const exchange = this.getExchange();
     const routingKey = this.getRoutingKey();
-
     const event = buildOrderCreatedEvent(order, paymentToken);
 
     // Log detalhado antes do envio
-    this.logger.log(
-      `Enviando evento para RabbitMQ: exchange=${exchange}, routingKey=${routingKey}, payload=${JSON.stringify(event)}`
-    );
+    this.logger.log('[RabbitMQ] Preparando envio de mensagem', OrdersEventsProducer.name);
+    this.logger.log(`[RabbitMQ] Exchange: ${exchange}`, OrdersEventsProducer.name);
+    this.logger.log(`[RabbitMQ] Routing Key: ${routingKey}`, OrdersEventsProducer.name);
+    this.logger.log(`[RabbitMQ] Payload: ${JSON.stringify(event)}`, OrdersEventsProducer.name);
 
-    // Publica um evento simples para outros servicos consumirem de forma assincrona.
-    this.channel.publish(exchange, routingKey, Buffer.from(JSON.stringify(event)), {
-      contentType: 'application/json',
-      persistent: true,
-    });
-
-    this.logger.log(`Evento order.created publicado para pedido ${order.id}`);
+    try {
+      this.channel.publish(
+        exchange,
+        routingKey,
+        Buffer.from(JSON.stringify(event)),
+        {
+          contentType: 'application/json',
+          persistent: true,
+        }
+      );
+      this.logger.log(`[RabbitMQ] Mensagem publicada com sucesso para pedido ${order.id}`, OrdersEventsProducer.name);
+    } catch (error) {
+      this.logger.error(`[RabbitMQ] Falha ao publicar mensagem para pedido ${order.id}: ${String(error)}`, undefined, OrdersEventsProducer.name);
+    }
   }
 
   private getExchange(): string {
