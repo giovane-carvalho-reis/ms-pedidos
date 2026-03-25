@@ -38,6 +38,20 @@ export class OrdersService {
     return order;
   }
 
+  async findBook(token: string) {
+    const response = await fetch('https://localhost:8080/book/1', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    const data = await response.json();
+
+    return data.title;
+  }
+
   private calculateTotal(createOrderDto: CreateOrderDto): number {
     return createOrderDto.items.reduce((total, item) => {
       return total + item.quantity * item.unitPrice;
