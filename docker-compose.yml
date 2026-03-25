@@ -44,6 +44,9 @@ services:
       DB_USERNAME: ${DB_USERNAME:-postgres}
       DB_PASSWORD: ${DB_PASSWORD:-postgres}
       DB_DATABASE: ${DB_DATABASE:-ms_pedidos}
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672
+      RABBITMQ_EXCHANGE: orders.exchange
+      RABBITMQ_ROUTING_KEY: order.created
     depends_on:
       postgres:
         condition: service_healthy
