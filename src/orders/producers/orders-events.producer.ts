@@ -53,6 +53,11 @@ export class OrdersEventsProducer implements OrderEventsPublisher, OnModuleInit,
 
     const event = buildOrderCreatedEvent(order, paymentToken);
 
+    // Log detalhado antes do envio
+    this.logger.log(
+      `Enviando evento para RabbitMQ: exchange=${exchange}, routingKey=${routingKey}, payload=${JSON.stringify(event)}`
+    );
+
     // Publica um evento simples para outros servicos consumirem de forma assincrona.
     this.channel.publish(exchange, routingKey, Buffer.from(JSON.stringify(event)), {
       contentType: 'application/json',
